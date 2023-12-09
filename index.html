@@ -12,6 +12,9 @@
             <input type="text" placeholder="Enter City Name" spellcheck="false">
             <button><img src="images/search.png"></button>
         </div>
+        <div class="error">
+            <p>Invalid City Name</p>
+        </div>
         <div class="weather">
             <img src="images/rain.png" class ="weather-icon">
             <h1 class="temp">22°C</h1>
@@ -20,7 +23,7 @@
                 <div class="col">
                     <img src="images/humidity.png">
                     <div>
-                        <p class="humiity">50%</p>
+                        <p class="humidity">50%</p>
                         <p>Humidity</p>
                     </div>
                 </div>
@@ -34,6 +37,79 @@
             </div>
         </div>
     </div>
-    
+    <!-- Your HTML remains unchanged -->
+
+    <script>
+        const apiKey ="397f8ab5f7b60592a5d0a8c85c8549f1";
+        const apiUrl ="https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        const searchBox = document.querySelector(".search input");
+        const searchBtn = document.querySelector(".search button");
+        const cityElement = document.querySelector(".city");
+        const tempElement = document.querySelector(".temp");
+        const humidityElement = document.querySelector(".humidity");
+        const windElement = document.querySelector(".wind");
+        const weatherIcon = document.querySelector(".weather-icon");
+
+        async function checkWeather(city){
+            const response = await fetch(`${apiUrl}${city}&appid=${apiKey}`);
+            const data = await response.json();
+
+            if(response.status== 404){
+                document.querySelector(".error").style.display ="block";
+                document.querySelector(".weather").style.display ="none";
+            }else{
+                cityElement.innerHTML = data.name;
+            tempElement.innerHTML = Math.round(data.main.temp) + "°C";
+            humidityElement.innerHTML = data.main.humidity + "%";
+            windElement.innerHTML = data.wind.speed + "km/h";
+
+            // Set weather icon based on weather condition
+            setWeatherIcon(data.weather[0].main);
+        }
+
+        // Function to set weather icon based on condition
+        function setWeatherIcon(condition) {
+            if (condition === "Clouds") {
+                weatherIcon.src = "images/clouds.png";
+            } else if (condition === "Clear") {
+                weatherIcon.src = "images/clear.png";
+            } else if (condition === "Rain") {
+                weatherIcon.src = "images/rain.png";
+            }else if (condition === "Drizzle") {
+                weatherIcon.src = "images/drizzle.png";
+            }else if (condition === "Humidity") {
+                weatherIcon.src = "images/humidity.png";
+            }else if (condition === "Mist") {
+                weatherIcon.src = "images/mist.png";
+            }else if (condition === "Snow") {
+                weatherIcon.src = "images/snow.png";
+            }else if (condition === "Wind") {
+                weatherIcon.src = "images/wind.png";
+            } 
+            
+            // Add more conditions as needed
+            // Handle other weather conditions here...
+            else {
+                // Default icon or handling for unknown conditions
+                weatherIcon.src = "images/default.png";
+            }
+
+            document.querySelector(".weather").style.display = "block";
+        }
+            }
+
+            
+
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+        });
+
+        // Initial weather for default city "kandy"
+        checkWeather();
+    </script>
+
+    <!-- Rest of your HTML remains unchanged -->
+
 </body>
 </html>
